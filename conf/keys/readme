@@ -1,0 +1,19 @@
+openssl genrsa -out ca.key 2048
+openssl req -new -key ca.key -out ca.csr
+openssl x509 -req -in ca.csr -signkey ca.key -out ca.crt
+
+
+openssl genrsa -out server.key 1024
+openssl rsa -in server.key -pubout -out server.pem
+
+
+openssl req -new -key server.key -out server.csr
+openssl x509 -req -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.crt
+
+
+openssl genrsa -out client.key 1024
+openssl rsa -in client.key -pubout -out client.pem
+
+
+openssl req -new -key client.key -out client.csr
+openssl x509 -req -CA ca.crt -extfile sample.ext -CAkey ca.key -CAcreateserial -in client.csr -out client.crt
